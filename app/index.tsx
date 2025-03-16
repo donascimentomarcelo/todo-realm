@@ -6,6 +6,8 @@ import { getAllTaskLists, saveTaskList } from '@/services/realmService';
 import { TaskListDTO } from '@/dtos/TaskListDTO';
 
 export default function HomeScreen() {
+  
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   useEffect(() => {
     console.log('home loaded')
@@ -13,7 +15,7 @@ export default function HomeScreen() {
 
   const persistRealmDBData = async () => {
     try {
-      const response = await axios.get<TaskListDTO[]>('https://0a57-187-67-203-200.ngrok-free.app/task-list');
+      const response = await axios.get<TaskListDTO[]>(`${apiUrl}/task-list`);
       console.log('Dados da API:', response.data[0]);
       saveTaskList(response.data);
     } catch (error) {
