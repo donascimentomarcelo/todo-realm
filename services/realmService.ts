@@ -6,7 +6,7 @@ import { NoteDTO } from "@/dtos/NoteDTO";
 // Função para salvar uma TaskList com Tasks e Notes
 export const saveTaskList = (taskList: TaskListDTO[]) => {
   taskList.forEach((taskListData: TaskListDTO) => {
-    const { id, name, tasks } = taskListData;
+    const { id, name, tasks, created_at, updated_at } = taskListData;
 
     console.log(`taskList persisted: ${name} - #${id}`);
 
@@ -15,11 +15,20 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
         const taskList = realm.create("TaskList", {
           id,
           name,
+          created_at,
+          updated_at,
         });
 
         // Salvar Tasks e Notes
         tasks.forEach((taskData: TaskDTO) => {
-          const { id: taskId, title, description, notes } = taskData;
+          const {
+            id: taskId,
+            title,
+            description,
+            notes,
+            created_at,
+            updated_at,
+          } = taskData;
 
           console.log(`task persisted: ${title} - #${taskId}`);
 
@@ -28,11 +37,13 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
             title,
             description,
             taskListId: taskList.id,
+            created_at,
+            updated_at,
           });
 
           // Salvar Notes
           notes.forEach((noteData: NoteDTO) => {
-            const { id: noteId, content } = noteData;
+            const { id: noteId, content, created_at, updated_at } = noteData;
 
             console.log(`note persisted: ${content} - #${noteId}`);
 
@@ -40,6 +51,8 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
               id: noteId,
               content,
               taskId: task.id,
+              created_at,
+              updated_at,
             });
           });
         });

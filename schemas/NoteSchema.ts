@@ -5,5 +5,7 @@ export const NoteSchema = {
     id: "int",
     content: "string",
     taskId: "int", // Relacionamento com Task
+    created_at: "date",
+    updated_at: "date",
   },
 };
