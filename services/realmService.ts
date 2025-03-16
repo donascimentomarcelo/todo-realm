@@ -50,17 +50,41 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
   });
 };
 
-// Função para buscar todas as TaskLists com Tasks e Notes
 export const getAllTaskLists = () => {
-  return realm.objects<TaskListDTO[]>("TaskList");
+
+  const taskLists = realm.objects<TaskListDTO[]>("TaskList");
+
+  const taskListsWithTasksAndNotes = taskLists.map((taskList: any) => {
+    // Busca as Tasks associadas à TaskList atual
+    const tasks = realm
+      .objects<TaskDTO[]>("Task")
+      .filtered(`taskListId == ${taskList.id}`);
+
+    // Para cada Task, busca as Notes associadas
+    const tasksWithNotes = tasks.map((task: any) => {
+      const notes = realm
+        .objects<NoteDTO[]>("Note")
+        .filtered(`taskId == ${task.id}`);
+      return {
+        ...task,
+        notes: notes, // Adiciona as Notes à Task
+      };
+    });
+
+    return {
+      ...taskList,
+      tasks: tasksWithNotes, // Adiciona as Tasks (com Notes) à TaskList
+    };
+  });
+
+  return taskListsWithTasksAndNotes;
 };
-// Função para buscar todas as TaskLists com Tasks e Notes
 
 export const clean = () => {
   try {
     realm.write(() => {
       realm.deleteAll();
-      console.log('delete all');
+      console.log("delete all");
     });
   } catch (err) {
     console.log("Error when deleting:", err);
