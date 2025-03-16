@@ -3,6 +3,7 @@ import { getAllTaskLists } from '@/services/realmService';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { router, useLocalSearchParams, Link } from 'expo-router';
 
 export default function DetailsScreen() {
   const [taskList, setTaskList] = useState<TaskListDTO[]>([]);
@@ -16,12 +17,19 @@ export default function DetailsScreen() {
     setTaskList(realmResponse.map(task => task as any));
   };
 
-  const Item = ({ name, tasks }: { name: string; tasks: any[] }) => (
-    <TouchableOpacity style={styles.item}>
-      <Text style={styles.title}>{name}</Text>
-      <Text style={styles.subtitle}>{tasks.length} tasks</Text>
+  const details = (item: any) => { 
+    router.push({
+      pathname: '/tasks',
+      params: {item: JSON.stringify(item) },
+    })
+  }
+
+  const Item = ({ item }: { item: { name: string; tasks: any[] } }) => (
+    <TouchableOpacity style={styles.item} onPress={() => details(item)}>
+      <Text style={styles.title}>{item.name}</Text>
+      <Text style={styles.subtitle}>{item.tasks.length} tasks</Text>
       <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { width: `${(tasks.length / 10) * 100}%` }]} />
+        <View style={[styles.progressFill, { width: `${(item.tasks.length / 10) * 100}%` }]} />
       </View>
     </TouchableOpacity>
   );
@@ -32,7 +40,7 @@ export default function DetailsScreen() {
         <SafeAreaView style={styles.container}>
           <FlatList
             data={taskList}
-            renderItem={({ item }) => <Item name={item.name} tasks={item.tasks} />}
+            renderItem={({ item }) => <Item item={item} />}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.listContainer}
           />

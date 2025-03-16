@@ -13,8 +13,9 @@ export default function RootLayout() {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="details" />
+      <Stack.Screen name="index" options={{ title: 'Home' }}/>
+      <Stack.Screen name="details" options={{ title: 'Task List' }}/>
+      <Stack.Screen name="tasks/index" options={{ title: 'Tasks' }}/>
     </Stack>
   );
 }

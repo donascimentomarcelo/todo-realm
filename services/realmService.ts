@@ -51,7 +51,6 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
 };
 
 export const getAllTaskLists = () => {
-
   const taskLists = realm.objects<TaskListDTO[]>("TaskList");
 
   const taskListsWithTasksAndNotes = taskLists.map((taskList: any) => {
