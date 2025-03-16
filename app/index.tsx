@@ -1,22 +1,16 @@
 import { Link } from 'expo-router';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import axios from 'axios';
-import { useEffect } from 'react';
-import { getAllTaskLists, saveTaskList } from '@/services/realmService';
+import { clean, getAllTaskLists, saveTaskList } from '@/services/realmService';
 import { TaskListDTO } from '@/dtos/TaskListDTO';
 
 export default function HomeScreen() {
   
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  useEffect(() => {
-    console.log('home loaded')
-  }, []);
-
   const persistRealmDBData = async () => {
     try {
       const response = await axios.get<TaskListDTO[]>(`${apiUrl}/task-list`);
-      console.log('Dados da API:', response.data[0]);
       saveTaskList(response.data);
     } catch (error) {
       console.error('Erro ao buscar dados da API:', error);
@@ -27,6 +21,8 @@ export default function HomeScreen() {
     const realmResponse = getAllTaskLists();
     console.log(realmResponse);
   }
+
+  const cleanAll = () =>  clean()
 
   const Separator = () => <View style={styles.separator} />;
 
@@ -39,7 +35,7 @@ export default function HomeScreen() {
         <Button
           onPress={persistRealmDBData}
           title="Persist in RealmDB"
-          color="#141584"
+          color="#3361ff"
           accessibilityLabel="Learn more about this purple button"
         />
       </View>
@@ -51,6 +47,17 @@ export default function HomeScreen() {
           onPress={loadRealmDBData}
           title="Load from RealmDB"
           color="#841584"
+          accessibilityLabel="Learn more about this purple button"
+        />
+      </View>
+
+      <Separator />
+      
+      <View>
+        <Button
+          onPress={cleanAll}
+          title="Clean All"
+          color="#ff5733"
           accessibilityLabel="Learn more about this purple button"
         />
       </View>

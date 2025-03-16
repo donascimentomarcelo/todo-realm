@@ -52,5 +52,17 @@ export const saveTaskList = (taskList: TaskListDTO[]) => {
 
 // Função para buscar todas as TaskLists com Tasks e Notes
 export const getAllTaskLists = () => {
-  return realm.objects("TaskList");
+  return realm.objects<TaskListDTO[]>("TaskList");
+};
+// Função para buscar todas as TaskLists com Tasks e Notes
+
+export const clean = () => {
+  try {
+    realm.write(() => {
+      realm.deleteAll();
+      console.log('delete all');
+    });
+  } catch (err) {
+    console.log("Error when deleting:", err);
+  }
 };
