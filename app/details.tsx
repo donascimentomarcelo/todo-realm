@@ -3,7 +3,7 @@ import { getAllTaskLists } from '@/services/realmService';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams, Link } from 'expo-router';
+import { router } from 'expo-router';
 
 export default function DetailsScreen() {
   const [taskList, setTaskList] = useState<TaskListDTO[]>([]);

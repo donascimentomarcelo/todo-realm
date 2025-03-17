@@ -1,33 +1,41 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { router, useLocalSearchParams, Link } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { TaskListDTO } from '@/dtos/TaskListDTO';
+import { TaskDTO } from '@/dtos/TaskDTO';
 
 export default function Task() {
     const params = useLocalSearchParams();
     const [item, setItem] = useState<TaskListDTO>();
 
-
     useEffect(() => {
-
         if (params.item) {
             const parsedItem = JSON.parse(params.item as string) as TaskListDTO;
             setItem(parsedItem);
         }
     }, [params.item]);
 
-    const details = (item: any) => {
-        router.push({
-            pathname: '/tasks',
-            params: { item: JSON.stringify(item) },
-        })
-    }
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    };
 
-    const Item = ({ item }: { item: { title: string; description: string } }) => (
-        <TouchableOpacity style={styles.item} onPress={() => details(item)}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.subtitle}>{item.description} tasks</Text>
+    const renderTask = ({ item }: { item: TaskDTO }) => (
+        <TouchableOpacity
+            style={styles.taskContainer}
+            onPress={() => {
+                router.push({
+                    pathname: '/tasks/details',
+                    params: { task: JSON.stringify(item) },
+                });
+            }}
+        >
+            <Text style={styles.taskTitle}>{item.title}</Text>
+            <Text style={styles.taskDate}>
+                Criado em: {formatDate(item.created_at)}
+            </Text>
+
         </TouchableOpacity>
     );
 
@@ -35,12 +43,16 @@ export default function Task() {
         <View style={styles.container}>
             <SafeAreaProvider>
                 <SafeAreaView style={styles.container}>
-                    <FlatList
-                        data={item?.tasks}
-                        renderItem={({ item }) => <Item item={item} />}
-                        keyExtractor={item => item.id.toString()}
-                        contentContainerStyle={styles.listContainer}
-                    />
+                    {item ? (
+                        <FlatList
+                            data={item.tasks}
+                            renderItem={renderTask}
+                            keyExtractor={(task) => task.id.toString()}
+                            contentContainerStyle={styles.listContainer}
+                        />
+                    ) : (
+                        <Text style={styles.loadingText}>Carregando...</Text>
+                    )}
                 </SafeAreaView>
             </SafeAreaProvider>
         </View>
@@ -50,14 +62,14 @@ export default function Task() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5', // Fundo suave
+        backgroundColor: '#F5F5F5',
     },
     listContainer: {
         paddingHorizontal: 16,
         paddingTop: 16,
     },
-    item: {
-        backgroundColor: '#FFFFFF', // Fundo branco para os itens
+    taskContainer: {
+        backgroundColor: '#FFFFFF',
         padding: 20,
         marginVertical: 8,
         borderRadius: 12,
@@ -67,25 +79,20 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
     },
-    title: {
+    taskTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#333333', // Texto escuro
+        color: '#333333',
     },
-    subtitle: {
-        fontSize: 14,
-        color: '#666666', // Texto cinza
-        marginTop: 4,
+    taskDate: {
+        fontSize: 12,
+        color: '#999999',
+        marginTop: 8,
     },
-    progressBar: {
-        height: 8,
-        backgroundColor: '#E0E0E0', // Fundo da barra de progresso
-        borderRadius: 4,
-        marginTop: 12,
-        overflow: 'hidden',
-    },
-    progressFill: {
-        height: '100%',
-        backgroundColor: '#4ECDC4', // Cor de preenchimento da barra de progresso
+    loadingText: {
+        fontSize: 16,
+        color: '#333333',
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
