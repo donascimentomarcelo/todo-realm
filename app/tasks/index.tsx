@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { TaskListDTO } from '@/dtos/TaskListDTO';
 import { TaskDTO } from '@/dtos/TaskDTO';
+import { FloatingButton } from '@/components/ui/FloatingButton';
 
 export default function Task() {
     const params = useLocalSearchParams();
@@ -39,6 +40,8 @@ export default function Task() {
         </TouchableOpacity>
     );
 
+    const handlePess = () => console.log('93eje')
+
     return (
         <View style={styles.container}>
             <SafeAreaProvider>
@@ -53,6 +56,7 @@ export default function Task() {
                     ) : (
                         <Text style={styles.loadingText}>Carregando...</Text>
                     )}
+                    <FloatingButton onPress={handlePess} />
                 </SafeAreaView>
             </SafeAreaProvider>
         </View>

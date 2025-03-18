@@ -30,16 +30,8 @@ export default function TaskDetails() {
 
     // Renderiza cada tarefa
     const renderTask = ({ item }: { item: TaskDTO }) => (
-        <TouchableOpacity
+        <View
             style={styles.taskContainer}
-            onPress={() => {
-                // Navega para a tela de detalhes da tarefa (se necessário)
-                console.log(item)
-                // router.push({
-                //     pathname: '/tasks/details',
-                //     params: { task: JSON.stringify(item) },
-                // });
-            }}
         >
             <Text style={styles.taskTitle}>{item.title}</Text>
             <Text style={styles.taskDescription}>{item.description}</Text>
@@ -55,7 +47,7 @@ export default function TaskDetails() {
                 keyExtractor={(note) => note.id.toString()}
                 style={styles.notesList}
             />
-        </TouchableOpacity>
+        </View>
     );
 
     return (
