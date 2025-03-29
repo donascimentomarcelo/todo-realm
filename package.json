@@ -44,7 +44,8 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "realm": "^12.14.1",
-    "expo-camera": "~16.0.18"
+    "expo-camera": "~16.0.18",
+    "@shopify/react-native-skia": "1.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

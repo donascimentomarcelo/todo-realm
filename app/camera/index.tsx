@@ -1,10 +1,29 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Overlay } from '@/components/ui/Overlay';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useEffect, useRef } from 'react';
+import { AppState, Button, Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 export default function Camera() {
-  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
+
+  const qrLock = useRef(false);
+  const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        qrLock.current = false;
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -21,20 +40,23 @@ export default function Camera() {
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
-
   return (
-    <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-    </View>
+    <SafeAreaView style={StyleSheet.absoluteFillObject}>
+      <CameraView
+        style={StyleSheet.absoluteFillObject}
+        facing="back"
+        onBarcodeScanned={({ data }) => {
+          console.log(data)
+          if (data && !qrLock.current) {
+            qrLock.current = true;
+            setTimeout(async () => {
+              await Linking.openURL(data);
+            }, 500);
+          }
+        }}
+      />
+      <Overlay />
+    </SafeAreaView>
   );
 }
 
